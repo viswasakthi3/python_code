@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Comment Section</title>
+</head>
+<body>
+  <h1>Comment Section</h1>
+  <div id="comments">
+    <div class="comment">
+      <p>This is a comment</p>
+      <button class="reply-button" data-comment-id="1">Reply</button>
+      <button class="upvote-button" data-comment-id="1">Thumbs Up</button>
+      <button class="downvote-button" data-comment-id="1">Thumbs Down</button>
+    </div>
+  </div>
+  <form id="reply-form" style="display: none;">
+    <input type="text" name="content" placeholder="Enter your reply">
+    <button type="submit">Post Reply</button>
+  </form>
+  <script>
+    document.querySelector('.reply-button').addEventListener('click', () => {
+      const commentId = event.target.dataset.commentId
+      document.getElementById('reply-form').style.display = 'block'
+      document.getElementById('reply-form').addEventListener('submit', event => {
+        event.preventDefault()
+        const formData = new FormData(event.target)
+        const replyContent = formData.get('content')
+        fetch('http://localhost:8000/comments/' + commentId + '/replies', {
+          method: 'POST',
+          body: JSON.stringify({content: replyContent}),
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+        .then(response => response.json())
+        .then(reply => {
+          // append the reply to the comment thread
+        })
+        .catch(error => {
+          console.error(error)
+        })
+      })
+    })
+    document.querySelectorAll('.upvote-button').forEach(button => {
+      button.addEventListener('click', () => {
+        const commentId = button.dataset.commentId
+        fetch('http://localhost:8000/comments/' + commentId + '/upvote', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+        .then(response => response.json())
+        .then(comment => {
+          // update the upvote count for the comment
+        })
+        .catch(error => {
+          console.error(error)
+        })
+      })
+    })
+    document.querySelectorAll('.downvote-button').forEach(button => {
+      button.addEventListener('click', () => {
+        const commentId = button.dataset.commentId
+        fetch('http://localhost:8000/comments/' + commentId + '/downvote', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+        .then(response => response.json())
+        .then(comment => {
+          // update the downvote count
+        })
+    .catch(error => {
+      console.error(error)
+    })
+  })
+})
